@@ -15,14 +15,10 @@ public class CustomerConfig {
             Customer mel = new Customer("Mel",
                     "van Veen", "Groenestraat 29",
                     "6681DW", "Bemmel",
-                    "0645584262", "vanveenmel11@gmail.com");
+                    "0645584262", "vanveenmel11@gmail.com","e5abb62efd92ea216544a6bc749b392bbba190fbdcc274a83979a871d31d370c");
 
-        Customer joost = new Customer("Joost",
-                    "van Aartsen", "De Braak 23",
-                    "8101GL", "Raalte",
-                    "0612365478", "j.vaartsen@gmail.com");
 
-        repository.saveAll(List.of(mel, joost));
+        repository.saveAll(List.of());
         };
 
 

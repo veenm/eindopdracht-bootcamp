@@ -1,13 +1,6 @@
-package nl.veenm.novi.customer;
+package nl.veenm.novi.user;
 
-import javax.persistence.*;
-
-@Entity
-@Table
-public class Customer {
-    @Id
-    @SequenceGenerator(name ="customer_sequence",sequenceName ="customer_sequence",allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_sequence")
+public class User {
     private Long id;
     private String firstName;
     private String lastName;
@@ -17,11 +10,24 @@ public class Customer {
     private String phone;
     private String email;
     private String password;
+    private String role;
 
-    public Customer() {
+    public User() {
     }
 
-    public Customer(Long id, String firstName, String lastName, String address, String postalCode, String city, String phone, String email, String password) {
+    public User(String firstName, String lastName, String address, String postalCode, String city, String phone, String email, String password, String role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.postalCode = postalCode;
+        this.city = city;
+        this.phone = phone;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    public User(Long id, String firstName, String lastName, String address, String postalCode, String city, String phone, String email, String password, String role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -31,17 +37,7 @@ public class Customer {
         this.phone = phone;
         this.email = email;
         this.password = password;
-    }
-
-    public Customer(String firstName, String lastName, String address, String postalCode, String city, String phone, String email, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-        this.postalCode = postalCode;
-        this.city = city;
-        this.phone = phone;
-        this.email = email;
-        this.password = password;
+        this.role = role;
     }
 
     public Long getId() {
@@ -56,16 +52,16 @@ public class Customer {
         return firstName;
     }
 
-    public void setFirstName(String first_name) {
-        this.firstName = first_name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String last_name) {
-        this.lastName = last_name;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getAddress() {
@@ -80,8 +76,8 @@ public class Customer {
         return postalCode;
     }
 
-    public void setPostalCode(String postal_code) {
-        this.postalCode = postal_code;
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
     public String getCity() {
@@ -116,18 +112,11 @@ public class Customer {
         this.password = password;
     }
 
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", address='" + address + '\'' +
-                ", postalCode='" + postalCode + '\'' +
-                ", city='" + city + '\'' +
-                ", phone='" + phone + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

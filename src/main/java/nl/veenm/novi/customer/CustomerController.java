@@ -22,7 +22,7 @@ public class CustomerController {
         return customerService.getCustomers();
     }
 
-    @PostMapping
+    @PostMapping()
     public void addCustomer(@RequestBody Customer customer){
         customerService.addNewCustomer(customer);
     }
@@ -35,9 +35,10 @@ public class CustomerController {
     @PutMapping(path = "{customerId}")
     public void updateCustomer(
             @PathVariable("customerId") Long customerId,
-            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
             @RequestParam(required = false) String email){
-        customerService.updateCustomer(customerId, name, email);
+        customerService.updateCustomer(customerId, firstName,lastName, email);
     }
 
 }

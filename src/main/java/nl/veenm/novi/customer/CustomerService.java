@@ -47,12 +47,15 @@ public class CustomerService {
     }
 
     @Transactional
-    public void updateCustomer(Long customerId, String name, String email) {
+    public void updateCustomer(Long customerId, String firstName,String lastName, String email) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new IllegalStateException(
                 "Customer with id " + customerId + " does not exist."));
 
-        if (name != null && name.length() > 0 && !Objects.equals(customer.getFirst_name(), name)){
-            customer.setFirst_name(name);
+        if (firstName != null && firstName.length() > 0 && !Objects.equals(customer.getFirstName(), firstName)){
+            customer.setFirstName(firstName);
+        }
+        if (lastName != null && lastName.length() > 0 && !Objects.equals(customer.getLastName(), lastName)){
+            customer.setLastName(lastName);
         }
 
         if (email != null && email.length() > 0 && !Objects.equals(customer.getEmail(), email)){
