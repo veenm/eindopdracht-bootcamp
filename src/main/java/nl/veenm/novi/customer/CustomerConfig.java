@@ -18,7 +18,7 @@ public class CustomerConfig {
                     "0645584262", "vanveenmel11@gmail.com","e5abb62efd92ea216544a6bc749b392bbba190fbdcc274a83979a871d31d370c");
 
 
-        repository.saveAll(List.of());
+        repository.saveAll(List.of(mel));
         };
 
 

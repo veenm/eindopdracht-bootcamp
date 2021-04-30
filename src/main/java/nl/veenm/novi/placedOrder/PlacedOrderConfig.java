@@ -13,8 +13,8 @@ public class PlacedOrderConfig {
     @Bean
     CommandLineRunner configOrders(PlacedOrderRepository repository){
         return args -> {
-            PlacedOrder order1 = new PlacedOrder(1l, LocalDate.now(),
-                    21.50f, "Online",
+            PlacedOrder order1 = new PlacedOrder(1L, LocalDate.now(),
+                    21.50f, "online",
                     2, true);
 
             repository.saveAll(List.of(order1));

@@ -1,9 +1,6 @@
 package nl.veenm.novi.placedOrderDetails;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table
@@ -11,6 +8,7 @@ public class PlacedOrderDetails {
 
     @Id
     @SequenceGenerator(name = "orderDetail_sequence", sequenceName = "orderDetail_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orderDetail_sequence")
     private Long id;
     private Long placedOrderId;
     private Long itemId;

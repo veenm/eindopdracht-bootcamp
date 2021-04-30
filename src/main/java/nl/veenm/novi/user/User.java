@@ -1,6 +1,13 @@
 package nl.veenm.novi.user;
 
+import javax.persistence.*;
+
+
+@Entity
 public class User {
+    @Id
+    @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
     private Long id;
     private String firstName;
     private String lastName;
@@ -11,6 +18,7 @@ public class User {
     private String email;
     private String password;
     private String role;
+
 
     public User() {
     }
