@@ -1,5 +1,7 @@
 package nl.veenm.novi.customer;
 
+import nl.veenm.novi.account.Account;
+import nl.veenm.novi.account.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,14 +15,30 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
 
+    private final AccountRepository account;
+
+    private Account accountDetails;
+
     @Autowired
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository, AccountRepository account) {
         this.customerRepository = customerRepository;
+
+        this.account = account;
     }
 
 
-    public List<Customer> getCustomers(){
-        return customerRepository.findAll();
+
+    public String getCustomer(Long customerId){
+        String accountInfo = "Naam: " + account.findById(customerId).get().getFirstName() + " " +
+                account.findById(customerId).get().getLastName() + "\n" +
+                "Adres: " + account.findById(customerId).get().getAddress() + ", " +
+                account.findById(customerId).get().getPostalCode() + " " +
+                account.findById(customerId).get().getCity() + "\n" +
+                "Telefoonnummer: " + account.findById(customerId).get().getPhone() + "\n" +
+                "Email: " + account.findById(customerId).get().getEmail();
+
+
+        return accountInfo;
     }
 
     public void addNewCustomer(Customer customer) {
@@ -72,5 +90,9 @@ public class CustomerService {
 
 
 
+    }
+
+    public List<Customer> getCustomers() {
+        return customerRepository.findAll();
     }
 }

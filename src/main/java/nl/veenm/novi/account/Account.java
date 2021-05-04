@@ -1,10 +1,11 @@
-package nl.veenm.novi.user;
+package nl.veenm.novi.account;
 
 import javax.persistence.*;
 
 
 @Entity
-public class User {
+@Table
+public class Account {
     @Id
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
@@ -20,10 +21,10 @@ public class User {
     private String role;
 
 
-    public User() {
+    public Account() {
     }
 
-    public User(String firstName, String lastName, String address, String postalCode, String city, String phone, String email, String password, String role) {
+    public Account(String firstName, String lastName, String address, String postalCode, String city, String phone, String email, String password, String role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
@@ -35,7 +36,7 @@ public class User {
         this.role = role;
     }
 
-    public User(Long id, String firstName, String lastName, String address, String postalCode, String city, String phone, String email, String password, String role) {
+    public Account(Long id, String firstName, String lastName, String address, String postalCode, String city, String phone, String email, String password, String role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;

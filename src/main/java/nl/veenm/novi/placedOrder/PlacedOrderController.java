@@ -1,7 +1,8 @@
 package nl.veenm.novi.placedOrder;
 
-import nl.veenm.novi.exceptions.PaymentNotKnownException;
+import nl.veenm.novi.menuitems.MenuItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +23,21 @@ public class PlacedOrderController {
         return placedOrderService.getOrders();
     }
 
-    @PostMapping
-    public void addOrder(@RequestBody PlacedOrder placedOrder) throws PaymentNotKnownException {
-        placedOrderService.addNewOrder(placedOrder);
+
+
+
+    @PostMapping(path = "/bestellen/{itemId}")
+    public String addOrder(@PathVariable("itemId") Long itemId){
+        return placedOrderService.addNewItem(itemId);
+    }
+
+    @GetMapping(path = "/bestellen")
+    public List<MenuItem> getItems(){
+        return placedOrderService.getOrderedItems();
+    }
+
+    @PostMapping(path = "/bestellen/place/{payment}/{delivery}")
+    public ResponseEntity placeOrder(@PathVariable ("payment") String payment, @PathVariable ("delivery") boolean delivery ){
+        return placedOrderService.placeOrder(payment, delivery);
     }
 }

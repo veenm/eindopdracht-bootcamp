@@ -3,27 +3,28 @@ package nl.veenm.novi.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 import static nl.veenm.novi.security.ApplicationUserRole.*;
 import static nl.veenm.novi.security.ApplicationUserPermission.*;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder) {
+    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder, UserDetailsServiceImpl userDetailsService) {
         this.passwordEncoder = passwordEncoder;
+        this.userDetailsService = userDetailsService;
     }
 
 
@@ -34,47 +35,11 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
                 .antMatchers("/customer/api/**").hasRole(CUSTOMER.name())
+                .antMatchers(HttpMethod.GET, "/restaurant/api/customers").hasAuthority(CUSTOMER_READ.getPermission())
                 .antMatchers("/restaurant/api/**").hasAnyRole(MANAGER.name(), COURIER.name(), CHEF.name())
                 .anyRequest()
                 .authenticated()
                 .and()
                 .httpBasic();
-    }
-
-    @Override
-    @Bean
-    protected UserDetailsService userDetailsService() {
-        UserDetails novi = User.builder()
-                .username("novi")
-                .password(passwordEncoder.encode("bootcamp"))
-                .roles(MANAGER.name()) //ROLE_MANAGER
-                .build();
-
-        UserDetails lasse = User.builder()
-                .username("lasse")
-                .password(passwordEncoder.encode("novi2021"))
-                .roles(CHEF.name()) //ROLE_CHEF
-                .build();
-
-
-        UserDetails veenm = User.builder()
-                .username("veenm")
-                .password(passwordEncoder.encode("java2021"))
-                .authorities(CUSTOMER.getGrantedAuthorities())
-                .build();
-
-        UserDetails bossf = User.builder()
-                .username("bossf")
-                .password(passwordEncoder.encode("java2021"))
-                .roles(COURIER.name()) //ROLE_COURIER
-                .build();
-
-        return new InMemoryUserDetailsManager(
-                novi,
-                veenm,
-                lasse,
-                bossf
-        );
-
     }
 }

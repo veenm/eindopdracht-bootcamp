@@ -95,4 +95,6 @@ public class PlacedOrder {
     public void setDelivery(boolean delivery) {
         this.delivery = delivery;
     }
+
+
 }

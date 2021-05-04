@@ -1,12 +1,13 @@
 package nl.veenm.novi.employee;
 
+import nl.veenm.novi.account.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/v1/employee")
+@RequestMapping(path = "restaurant/api/v1/employees")
 public class EmployeeController {
 
 
@@ -20,7 +21,7 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public List<Employee> getEmployee(){
+    public List<Account> getEmployee(){
         return employeeService.getEmployees();
     }
 

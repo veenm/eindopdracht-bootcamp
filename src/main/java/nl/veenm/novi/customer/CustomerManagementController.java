@@ -1,5 +1,6 @@
 package nl.veenm.novi.customer;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class CustomerManagementController {
 
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
     public List<Customer> getAllCustomers(){
         return customerService.getCustomers();
     }
@@ -34,6 +36,12 @@ public class CustomerManagementController {
     public void updateCustomer(@PathVariable("customerId") Integer customerId, @RequestBody Customer customer){
         System.out.println(String.format("%s %s", customerId, customer));
 
+    }
+
+    @GetMapping(path = "{customerId}")
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    public String getSpecificCustomer(@PathVariable("customerId") Long customerId){
+        return customerService.getCustomer(customerId);
     }
 
 
