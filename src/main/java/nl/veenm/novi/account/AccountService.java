@@ -23,6 +23,55 @@ public class AccountService {
 
     }
 
+    public String getAccountInfo(Long accountId){
+        String accountInfo = "Naam: " + accountRepository.findById(accountId).get().getFirstName() + " " +
+                accountRepository.findById(accountId).get().getLastName() + "\n" +
+                "Adres: " + accountRepository.findById(accountId).get().getAddress() + ", " +
+                accountRepository.findById(accountId).get().getPostalCode() + " " +
+                accountRepository.findById(accountId).get().getCity() + "\n" +
+                "Telefoonnummer: " + accountRepository.findById(accountId).get().getPhone() + "\n" +
+                "Email: " + accountRepository.findById(accountId).get().getEmail();
+
+
+        return accountInfo;
+    }
+
+    @Transactional
+    public void updateAccount(Long accountId, String firstName,String lastName, String email, String phone, String address, String postalCode, String city) {
+        Account account = accountRepository.findById(accountId).orElseThrow(() -> new IllegalStateException(
+                "Account with id " + accountId + " does not exist."));
+
+        if (firstName != null && firstName.length() > 0 && !Objects.equals(account.getFirstName(), firstName)) {
+            account.setFirstName(firstName);
+        }
+        if (lastName != null && lastName.length() > 0 && !Objects.equals(account.getLastName(), lastName)) {
+            account.setLastName(lastName);
+        }
+
+        if (email != null && email.length() > 0 && !Objects.equals(account.getEmail(), email)) {
+            Optional<Account> accountOptional = accountRepository.findAccountByEmail(email);
+            if (accountOptional.isPresent()) {
+                throw new IllegalStateException("Email already taken");
+            } else {
+                account.setEmail(email);
+            }
+        }
+        if (phone != null && phone.length() > 0 && !Objects.equals(account.getPhone(), phone)) {
+            account.setPhone(phone);
+        }
+        if (address != null && address.length() > 0 && !Objects.equals(account.getAddress(), address)) {
+            account.setAddress(address);
+        }
+        if (postalCode != null && postalCode.length() > 0 && !Objects.equals(account.getPostalCode(), postalCode)) {
+            account.setPostalCode(postalCode);
+        }
+        if (city != null && city.length() > 0 && !Objects.equals(account.getCity(), city)) {
+            account.setCity(city);
+        }
+
+        accountRepository.saveAll(List.of(account));
+    }
+
     
 
 
@@ -57,33 +106,15 @@ public class AccountService {
 
     }
 
-    @Transactional
-    public void updateAccount(Long accountId, String firstName,String lastName, String email) {
-        Account account = accountRepository.findById(accountId).orElseThrow(() -> new IllegalStateException(
-                "Account with id " + accountId + " does not exist."));
 
-        if (firstName != null && firstName.length() > 0 && !Objects.equals(account.getFirstName(), firstName)){
-            account.setFirstName(firstName);
-        }
-        if (lastName != null && lastName.length() > 0 && !Objects.equals(account.getLastName(), lastName)){
-            account.setLastName(lastName);
-        }
-
-        if (email != null && email.length() > 0 && !Objects.equals(account.getEmail(), email)){
-            Optional<Account> accountOptional = accountRepository.findAccountByEmail(email);
-            if (accountOptional.isPresent()){
-                throw new IllegalStateException("Email already taken");
-            }
-            else{
-                account.setEmail(email);
-            }
-        }
-
-
-
-
-
+    public List<Account> getCustomers() {
+        return accountRepository.findAll();
     }
 
-
+    public Optional<Account> getCustomer(String email) {
+        return accountRepository.findAccountByEmail(email);
+    }
 }
+
+
+

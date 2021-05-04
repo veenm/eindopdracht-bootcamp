@@ -1,48 +1,40 @@
 package nl.veenm.novi.customer;
 
+import nl.veenm.novi.account.Account;
+import nl.veenm.novi.account.AccountService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "restaurant/api/v1/customers")
 public class CustomerManagementController {
 
     private final CustomerService customerService;
+    private final AccountService accountService;
 
-    public CustomerManagementController(CustomerService customerService) {
+    public CustomerManagementController(CustomerService customerService, AccountService accountService) {
         this.customerService = customerService;
+        this.accountService = accountService;
     }
 
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_MANAGER')")
-    public List<Customer> getAllCustomers(){
-        return customerService.getCustomers();
+    public List<Account> getAllCustomers(){
+        return accountService.getCustomers();
     }
 
-    @PostMapping
-    public void registerNewCustomer(@RequestBody Customer customer){
-        System.out.println(customer);
-    }
 
-    @DeleteMapping(path = "{customerId}")
-    public void deleteCustomer(@PathVariable("customerId") Integer customerId){
-        System.out.println(customerId);
-    }
-
-    @PutMapping(path = "{customerId}")
-    public void updateCustomer(@PathVariable("customerId") Integer customerId, @RequestBody Customer customer){
-        System.out.println(String.format("%s %s", customerId, customer));
-
-    }
-
-    @GetMapping(path = "{customerId}")
+    @GetMapping(path = "{email}")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
-    public String getSpecificCustomer(@PathVariable("customerId") Long customerId){
-        return customerService.getCustomer(customerId);
+    public Optional<Account> getSpecificCustomer(@PathVariable("email") String email){
+        return accountService.getCustomer(email);
     }
+
+
 
 
 }

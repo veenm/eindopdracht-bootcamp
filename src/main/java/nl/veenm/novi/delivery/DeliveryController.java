@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/v1/deliveries")
+@RequestMapping(path = "/restaurant/api/v1/deliveries")
 public class DeliveryController {
 
     private final DeliveryService deliveryService;
@@ -22,8 +22,12 @@ public class DeliveryController {
         return deliveryService.getDeliveries();
     }
 
-    @PostMapping
-    public void addDelivery(@RequestBody Delivery delivery){
-        deliveryService.addNewDelivery(delivery);
+    @PostMapping(path = "/done/{orderId}")
+    public String deliveryDone(@PathVariable ("orderId") Long orderId){
+        return deliveryService.deliveryDone(orderId);
+    }
+    @PostMapping(path = "/deliver/{orderId}")
+    public String deliveryTransit(@PathVariable ("orderId") Long orderId){
+        return deliveryService.deliveryTransit(orderId);
     }
 }

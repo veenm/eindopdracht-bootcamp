@@ -1,11 +1,14 @@
 package nl.veenm.novi.placedOrder;
 
+import nl.veenm.novi.employee.Employee;
+
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Comparator;
 
 @Entity
 @Table
-public class PlacedOrder {
+public class PlacedOrder{
 
     @Id
     @SequenceGenerator(name = "order_sequence", sequenceName = "order_sequence", allocationSize = 1)
@@ -17,20 +20,22 @@ public class PlacedOrder {
     private String payment;
     private Integer amountOfServing;
     private boolean delivery;
+    private String status;
 
     public PlacedOrder() {
     }
 
-    public PlacedOrder(Long customerId, LocalDate orderDate, float amount, String payment, Integer amountOfServing, boolean delivery) {
+    public PlacedOrder(Long customerId, LocalDate orderDate, float amount, String payment, Integer amountOfServing, boolean delivery, String status) {
         this.customerId = customerId;
         this.orderDate = orderDate;
         this.amount = amount;
         this.payment = payment;
         this.amountOfServing = amountOfServing;
         this.delivery = delivery;
+        this.status = status;
     }
 
-    public PlacedOrder(Long id, Long customerId, LocalDate orderDate, float amount, String payment, Integer amountOfServing, boolean delivery) {
+    public PlacedOrder(Long id, Long customerId, LocalDate orderDate, float amount, String payment, Integer amountOfServing, boolean delivery, String status) {
         this.id = id;
         this.customerId = customerId;
         this.orderDate = orderDate;
@@ -38,6 +43,7 @@ public class PlacedOrder {
         this.payment = payment;
         this.amountOfServing = amountOfServing;
         this.delivery = delivery;
+        this.status = status;
     }
 
     public Long getId() {
@@ -95,6 +101,15 @@ public class PlacedOrder {
     public void setDelivery(boolean delivery) {
         this.delivery = delivery;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
 
 
 }

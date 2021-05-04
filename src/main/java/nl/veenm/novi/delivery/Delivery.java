@@ -17,11 +17,12 @@ public class Delivery {
     private String customerPhone;
     private boolean paid;
     private float amount;
+    private String status;
 
     public Delivery() {
     }
 
-    public Delivery(Long orderId, Long customerId, String customerAddress, String customerCity, String customerPhone, boolean paid, float amount) {
+    public Delivery(Long orderId, Long customerId, String customerAddress, String customerCity, String customerPhone, boolean paid, float amount, String status) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.customerAddress = customerAddress;
@@ -29,6 +30,7 @@ public class Delivery {
         this.customerPhone = customerPhone;
         this.paid = paid;
         this.amount = amount;
+        this.status = status;
     }
 
     public Delivery(Long id, Long orderId, Long customerId, String customerAddress, String customerCity, String customerPhone, boolean paid, float amount) {
@@ -104,6 +106,14 @@ public class Delivery {
 
     public void setAmount(float amount) {
         this.amount = amount;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override

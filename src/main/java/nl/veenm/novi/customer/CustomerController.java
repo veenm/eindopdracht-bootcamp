@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "api/v1/customers")
+@RequestMapping(path = "/api/v1/profile")
 public class CustomerController {
 
 
@@ -25,32 +25,29 @@ public class CustomerController {
         this.userDetailsService = userDetailsService;
     }
 
-//    @GetMapping
-//    public List<Customer> getCustomers(){
-//        return customerService.getCustomers();
-//    }
-    @GetMapping
-    public String getCustomer(){
 
-        return customerService.getCustomer(accountService.getAccountByEmail(userDetailsService.userEmail).get().getId());
+    @GetMapping
+    public String getAccount(){
+
+        return accountService.getAccountInfo(accountService.getAccountByEmail(userDetailsService.userEmail).get().getId());
     }
 
 
 
 
-    @PutMapping(path = "{customerId}")
-    public void updateCustomer(
-            @PathVariable("customerId") Long customerId,
+    @PutMapping(path = "/change")
+    public void updateAccount(
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String lastName,
-            @RequestParam(required = false) String email){
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String address,
+            @RequestParam(required = false) String postalCode,
+            @RequestParam(required = false) String city){
 
-        if(accountService.getAccountByEmail(userDetailsService.userEmail).get().getId() == customerId){
-            customerService.updateCustomer(customerId, firstName,lastName, email);
-        }
-        else{
-            throw new IllegalStateException("CustomerId does not match");
-        }
+            Long customerId = accountService.getAccountByEmail(userDetailsService.userEmail).get().getId();
+            accountService.updateAccount(customerId, firstName,lastName, email, phone,address, postalCode, city);
+
 
     }
 

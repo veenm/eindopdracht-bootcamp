@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/v1/orders")
+@RequestMapping(path = "api/v1/")
 public class PlacedOrderController {
 
     private final PlacedOrderService placedOrderService;
@@ -18,7 +18,8 @@ public class PlacedOrderController {
         this.placedOrderService = placedOrderService;
     }
 
-    @GetMapping
+
+    @GetMapping(path = "/bestellingen")
     public List<PlacedOrder> getOrders(){
         return placedOrderService.getOrders();
     }
@@ -31,12 +32,12 @@ public class PlacedOrderController {
         return placedOrderService.addNewItem(itemId);
     }
 
-    @GetMapping(path = "/bestellen")
+    @GetMapping(path = "/bestellen/overzicht")
     public List<MenuItem> getItems(){
         return placedOrderService.getOrderedItems();
     }
 
-    @PostMapping(path = "/bestellen/place/{payment}/{delivery}")
+    @PostMapping(path = "/bestellen/plaatsen/{payment}/{delivery}")
     public ResponseEntity placeOrder(@PathVariable ("payment") String payment, @PathVariable ("delivery") boolean delivery ){
         return placedOrderService.placeOrder(payment, delivery);
     }

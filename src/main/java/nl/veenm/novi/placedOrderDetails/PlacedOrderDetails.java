@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table
-public class PlacedOrderDetails {
+public class PlacedOrderDetails{
 
     @Id
     @SequenceGenerator(name = "orderDetail_sequence", sequenceName = "orderDetail_sequence", allocationSize = 1)
@@ -62,13 +62,6 @@ public class PlacedOrderDetails {
         this.quantity = quantity;
     }
 
-    @Override
-    public String toString() {
-        return "OrderDetails{" +
-                "id=" + id +
-                ", placedOrderId=" + placedOrderId +
-                ", itemId=" + itemId +
-                ", quantity=" + quantity +
-                '}';
-    }
+
+
 }

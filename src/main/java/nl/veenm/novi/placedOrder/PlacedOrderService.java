@@ -2,12 +2,16 @@ package nl.veenm.novi.placedOrder;
 
 import nl.veenm.novi.account.Account;
 import nl.veenm.novi.account.AccountRepository;
+import nl.veenm.novi.delivery.Delivery;
+import nl.veenm.novi.delivery.DeliveryRepository;
 import nl.veenm.novi.menuitems.MenuItem;
 import nl.veenm.novi.menuitems.MenuItemRepository;
+import nl.veenm.novi.pickup.Pickup;
+import nl.veenm.novi.pickup.PickupRepository;
 import nl.veenm.novi.placedOrderDetails.PlacedOrderDetails;
 import nl.veenm.novi.security.UserDetailsServiceImpl;
+import nl.veenm.novi.menuitems.SortMenuItems;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,6 +30,8 @@ public class PlacedOrderService {
     private final MenuItemRepository menuItemRepository;
     private final UserDetailsServiceImpl userDetailsService;
     private final AccountRepository accountRepository;
+    private final DeliveryRepository deliveryRepository;
+    private final PickupRepository pickupRepository;
 
 
     private ArrayList<MenuItem> orderedMenuItems;
@@ -42,16 +48,29 @@ public class PlacedOrderService {
     }
 
     @Autowired
-    public PlacedOrderService(PlacedOrderRepository placedOrderRepository, MenuItemRepository menuItemRepository, UserDetailsServiceImpl userDetailsService, AccountRepository accountRepository, ArrayList<MenuItem> orderedMenuItems) {
+    public PlacedOrderService(PlacedOrderRepository placedOrderRepository, MenuItemRepository menuItemRepository, UserDetailsServiceImpl userDetailsService, AccountRepository accountRepository, DeliveryRepository deliveryRepository, PickupRepository pickupRepository, ArrayList<MenuItem> orderedMenuItems) {
         this.placedOrderRepository = placedOrderRepository;
         this.menuItemRepository = menuItemRepository;
         this.userDetailsService = userDetailsService;
         this.accountRepository = accountRepository;
+        this.deliveryRepository = deliveryRepository;
+        this.pickupRepository = pickupRepository;
         this.orderedMenuItems = orderedMenuItems;
     }
 
     public List<PlacedOrder> getOrders(){
-        return placedOrderRepository.findAll();
+        ArrayList<PlacedOrder> placedOrders = new ArrayList<PlacedOrder>();
+        placedOrders.addAll(placedOrderRepository.findAll());
+        int i = 0;
+        for (PlacedOrder placedOrder: placedOrders) {
+
+            if(placedOrder.getStatus().equalsIgnoreCase("order_delivered") ||placedOrder.getStatus().equalsIgnoreCase("order_picked_up") ){
+                placedOrders.remove(i);
+            }
+            i++;
+
+        }
+        return placedOrders;
     }
 
     public List<MenuItem> getOrderedItems(){
@@ -70,7 +89,19 @@ public class PlacedOrderService {
         orderedMenuItems.add(menuItem);
         System.out.println(menuItem.getName() + " has been added.");
 
-        return menuItem.getName() + "has been added";
+        Collections.sort(orderedMenuItems, new SortMenuItems());
+        Collections.reverse(orderedMenuItems);
+
+
+        for (MenuItem menuitem:orderedMenuItems) {
+            System.out.println("Id:" + menuitem.getId());
+            System.out.println("Name:" + menuitem.getName());
+            System.out.println("Price:" + menuitem.getPrice());
+
+        }
+        return menuItem.getName() + " has been added";
+
+
     }
 
     @Transactional
@@ -107,6 +138,7 @@ public class PlacedOrderService {
         newOrder.setCustomerId(customerId);
         newOrder.setDelivery(delivery);
         newOrder.setPayment(payment);
+        newOrder.setStatus("Order_Placed");
 
         System.out.println(newOrder.getPayment() + " " + newOrder.isDelivery());
 
@@ -116,15 +148,6 @@ public class PlacedOrderService {
         if (newOrder.getAmount() > 0) {
             placedOrderRepository.save(newOrder);
 
-//            entityManager.createNativeQuery("INSERT INTO placed_order (id,amount, amount_of_serving, customer_id, delivery, order_date, payment) VALUES  (?,?,?,?,?,?,?)")
-//                    .setParameter(1, newOrder.getId())
-//                    .setParameter(2, newOrder.getAmount())
-//                    .setParameter(3, newOrder.getAmountOfServing())
-//                    .setParameter(4, newOrder.getCustomerId())
-//                    .setParameter(5, newOrder.isDelivery())
-//                    .setParameter(6, newOrder.getOrderDate())
-//                    .setParameter(7, newOrder.getPayment())
-//                    .executeUpdate();
 
             long lastId = 0L;
             int lastQuantity = 0;
@@ -139,7 +162,7 @@ public class PlacedOrderService {
                             .setParameter(1,item.getId())
                             .executeUpdate();
                     entityManager.createNativeQuery("INSERT INTO placed_order_details (id, item_id, placed_order_id, quantity) VALUES (?,?,?,?)")
-                            .setParameter(1,createPlacedOrderDetailsID())
+                            .setParameter(1,placedOrderDetailsIdCounter)
                             .setParameter(2,newOrderDetails.getItemId())
                             .setParameter(3,newOrderDetails.getPlacedOrderId())
                             .setParameter(4,quantity)
@@ -190,5 +213,60 @@ public class PlacedOrderService {
             placedOrderIdCounter = placedOrderIdCounter - 1;
             return new ResponseEntity<>("No items found in order",HttpStatus.NOT_ACCEPTABLE);
         }
+    }
+
+    @Transactional
+    public String readyOrder(Long orderId) {
+        Optional<PlacedOrder> orderDetails = placedOrderRepository.findById(orderId);
+
+        if (orderDetails.get().isDelivery()){
+
+
+            //generate new delivery record
+            Delivery createDelivery = new Delivery();
+            createDelivery.setAmount(orderDetails.get().getAmount());
+            createDelivery.setOrderId(orderDetails.get().getId());
+            createDelivery.setCustomerId(orderDetails.get().getCustomerId());
+            createDelivery.setCustomerAddress(accountRepository.findById(orderDetails.get().getCustomerId()).get().getAddress());
+            createDelivery.setCustomerCity(accountRepository.findById(orderDetails.get().getCustomerId()).get().getCity());
+            createDelivery.setCustomerPhone(accountRepository.findById(orderDetails.get().getCustomerId()).get().getPhone());
+            createDelivery.setStatus("ready_for_delivery");
+            if(orderDetails.get().getPayment().equalsIgnoreCase("online")){
+                createDelivery.setPaid(true);
+            }
+            else{
+                createDelivery.setPaid(false);
+            }
+            deliveryRepository.saveAll(List.of(createDelivery));
+        }
+        else {
+
+
+            Pickup createPickup = new Pickup();
+
+            createPickup.setCustomerFirstName(accountRepository.findById(orderDetails.get().getCustomerId()).get().getFirstName());
+            createPickup.setOrderId(orderDetails.get().getId());
+            createPickup.setAmount(orderDetails.get().getAmount());
+            createPickup.setCustomerId(orderDetails.get().getCustomerId());
+            createPickup.setCustomerPhone(accountRepository.findById(orderDetails.get().getCustomerId()).get().getPhone());
+            createPickup.setStatus("ready_for_pickup");
+            if(orderDetails.get().getPayment().equalsIgnoreCase("online")){
+                createPickup.setPaid(true);
+            }
+            else{
+                createPickup.setPaid(false);
+            }
+            pickupRepository.saveAll(List.of(createPickup));
+        }
+
+        //update status
+        entityManager.createNativeQuery("UPDATE placed_order SET status = ? WHERE id = ?")
+                .setParameter(1, orderDetails.get().getStatus())
+                .setParameter(2,orderDetails.get().getId())
+                .executeUpdate();
+        System.out.println("orderDetails Status: " + orderDetails.get().getStatus());
+        System.out.println("orderDetails Id: " + orderDetails.get().getId());
+
+        return "Order status has been updated";
     }
 }
