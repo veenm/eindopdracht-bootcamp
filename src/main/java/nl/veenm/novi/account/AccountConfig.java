@@ -1,9 +1,6 @@
 package nl.veenm.novi.account;
 
-import nl.veenm.novi.account.Account;
-import nl.veenm.novi.account.AccountRepository;
-import nl.veenm.novi.employee.Employee;
-import nl.veenm.novi.security.ApplicationUserRole;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

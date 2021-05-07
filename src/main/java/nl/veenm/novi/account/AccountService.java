@@ -1,9 +1,12 @@
 package nl.veenm.novi.account;
 
+import nl.veenm.novi.placedOrder.PlacedOrder;
+import nl.veenm.novi.placedOrder.PlacedOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -12,10 +15,14 @@ import java.util.Optional;
 public class AccountService {
 
     private final AccountRepository accountRepository;
+    private final PlacedOrderRepository placedOrderRepository;
+
 
     @Autowired
-    public AccountService(AccountRepository accountRepository) {
+    public AccountService(AccountRepository accountRepository, PlacedOrderRepository placedOrderRepository) {
         this.accountRepository = accountRepository;
+        this.placedOrderRepository = placedOrderRepository;
+
     }
 
     public Optional<Account> getAccountByEmail(String email){
@@ -113,6 +120,21 @@ public class AccountService {
 
     public Optional<Account> getCustomer(String email) {
         return accountRepository.findAccountByEmail(email);
+    }
+
+    public ArrayList<PlacedOrder> getOrders(Long accountId) {
+        ArrayList<PlacedOrder> placedOrders = new ArrayList<PlacedOrder>();
+        placedOrders.addAll(placedOrderRepository.findAll());
+        int i = 0;
+
+        for (PlacedOrder placedOrder: placedOrders) {
+            if(!placedOrder.getCustomerId().equals(accountId)){
+                placedOrders.remove(i);
+            }
+            i++;
+
+        }
+        return placedOrders;
     }
 }
 

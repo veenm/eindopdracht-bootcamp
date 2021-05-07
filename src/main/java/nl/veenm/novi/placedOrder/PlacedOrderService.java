@@ -38,6 +38,7 @@ public class PlacedOrderService {
 
     private static long placedOrderIdCounter = 0;
     private static long placedOrderDetailsIdCounter = 0;
+    private static long lastOrderId = 0;
 
     public static synchronized long createPlacedOrderID(){
         placedOrderIdCounter++;
@@ -110,6 +111,7 @@ public class PlacedOrderService {
         PlacedOrderDetails newOrderDetails = new PlacedOrderDetails();
 
 
+
         double price = 0;
         int amount = 0;
         Long customerId;
@@ -155,7 +157,7 @@ public class PlacedOrderService {
 
                 System.out.println("item.getId() = " + item.getId());
                 System.out.println("lastId = " + lastId);
-                if(item.getId() == lastId){
+                if(item.getId() == lastId && newOrder.getId() != lastOrderId){
                     int quantity = lastQuantity + 1;
                     System.out.println("lastQuantity + 1 = " + lastQuantity);
                     entityManager.createNativeQuery("DELETE FROM placed_order_details WHERE item_id=?")
@@ -195,6 +197,8 @@ public class PlacedOrderService {
 
                 }
         }
+
+            lastOrderId = newOrder.getId();
 
             newOrder.setId(null);
             newOrder.setAmount(0.00F);

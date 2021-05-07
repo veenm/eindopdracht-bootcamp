@@ -2,6 +2,7 @@ package nl.veenm.novi.delivery;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class DeliveryController {
         return deliveryService.getDeliveries();
     }
 
+    @PreAuthorize("hasRole('ROLE_COURIER')")
     @PostMapping(path = "/done/{orderId}")
     public String deliveryDone(@PathVariable ("orderId") Long orderId){
         return deliveryService.deliveryDone(orderId);

@@ -36,18 +36,7 @@ public class Account {
         this.role = role;
     }
 
-    public Account(Long id, String firstName, String lastName, String address, String postalCode, String city, String phone, String email, String password, String role) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-        this.postalCode = postalCode;
-        this.city = city;
-        this.phone = phone;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
+
 
     public Long getId() {
         return id;

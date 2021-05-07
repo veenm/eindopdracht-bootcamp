@@ -21,15 +21,7 @@ public class Pickup {
     public Pickup() {
     }
 
-    public Pickup(Long orderId, Long customerId, String customerFirstName, boolean paid, float amount,String customerPhone, String status) {
-        this.orderId = orderId;
-        this.customerId = customerId;
-        this.customerFirstName = customerFirstName;
-        this.paid = paid;
-        this.amount = amount;
-        this.status = status;
-        this.customerPhone = customerPhone;
-    }
+
 
     public Long getId() {
         return id;

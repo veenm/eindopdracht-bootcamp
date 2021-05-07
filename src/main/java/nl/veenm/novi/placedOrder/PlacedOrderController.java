@@ -19,14 +19,6 @@ public class PlacedOrderController {
     }
 
 
-    @GetMapping(path = "/bestellingen")
-    public List<PlacedOrder> getOrders(){
-        return placedOrderService.getOrders();
-    }
-
-
-
-
     @PostMapping(path = "/bestellen/{itemId}")
     public String addOrder(@PathVariable("itemId") Long itemId){
         return placedOrderService.addNewItem(itemId);

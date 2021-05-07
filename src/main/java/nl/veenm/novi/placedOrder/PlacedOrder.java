@@ -1,10 +1,9 @@
 package nl.veenm.novi.placedOrder;
 
-import nl.veenm.novi.employee.Employee;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Comparator;
+
 
 @Entity
 @Table
@@ -25,26 +24,7 @@ public class PlacedOrder{
     public PlacedOrder() {
     }
 
-    public PlacedOrder(Long customerId, LocalDate orderDate, float amount, String payment, Integer amountOfServing, boolean delivery, String status) {
-        this.customerId = customerId;
-        this.orderDate = orderDate;
-        this.amount = amount;
-        this.payment = payment;
-        this.amountOfServing = amountOfServing;
-        this.delivery = delivery;
-        this.status = status;
-    }
 
-    public PlacedOrder(Long id, Long customerId, LocalDate orderDate, float amount, String payment, Integer amountOfServing, boolean delivery, String status) {
-        this.id = id;
-        this.customerId = customerId;
-        this.orderDate = orderDate;
-        this.amount = amount;
-        this.payment = payment;
-        this.amountOfServing = amountOfServing;
-        this.delivery = delivery;
-        this.status = status;
-    }
 
     public Long getId() {
         return id;

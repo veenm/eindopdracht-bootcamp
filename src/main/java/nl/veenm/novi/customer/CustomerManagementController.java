@@ -12,11 +12,10 @@ import java.util.Optional;
 @RequestMapping(path = "restaurant/api/v1/customers")
 public class CustomerManagementController {
 
-    private final CustomerService customerService;
+
     private final AccountService accountService;
 
-    public CustomerManagementController(CustomerService customerService, AccountService accountService) {
-        this.customerService = customerService;
+    public CustomerManagementController(AccountService accountService) {
         this.accountService = accountService;
     }
 

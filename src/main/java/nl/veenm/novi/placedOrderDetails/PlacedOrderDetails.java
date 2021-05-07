@@ -17,18 +17,6 @@ public class PlacedOrderDetails{
     public PlacedOrderDetails() {
     }
 
-    public PlacedOrderDetails(Long placedOrderId, Long itemId, Integer quantity) {
-        this.placedOrderId = placedOrderId;
-        this.itemId = itemId;
-        this.quantity = quantity;
-    }
-
-    public PlacedOrderDetails(Long id, Long placedOrderId, Long itemId, Integer quantity) {
-        this.id = id;
-        this.placedOrderId = placedOrderId;
-        this.itemId = itemId;
-        this.quantity = quantity;
-    }
 
     public Long getId() {
         return id;

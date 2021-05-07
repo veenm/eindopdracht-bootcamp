@@ -1,14 +1,12 @@
 package nl.veenm.novi.pickup;
 
-import nl.veenm.novi.delivery.Delivery;
-import nl.veenm.novi.delivery.DeliveryRepository;
-import nl.veenm.novi.placedOrder.PlacedOrder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class PickupService {

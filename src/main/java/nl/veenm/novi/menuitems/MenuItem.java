@@ -15,12 +15,7 @@ public class MenuItem {
     private Double price;
 
 
-    public MenuItem(Long id, String name, String description, Double price) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-    }
+
 
     public MenuItem(String name, String description, Double price) {
         this.name = name;

@@ -1,27 +1,29 @@
 package nl.veenm.novi.customer;
 
 import nl.veenm.novi.account.AccountService;
+import nl.veenm.novi.placedOrder.PlacedOrder;
 import nl.veenm.novi.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
 @RestController
-@RequestMapping(path = "/api/v1/profile")
+@RequestMapping(path = "/api/v1/profiel")
 public class CustomerController {
 
 
 
 
-    private final CustomerService customerService;
+
     private final AccountService accountService;
     private final UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    public CustomerController(AccountService accountService, CustomerService customerService, UserDetailsServiceImpl userDetailsService) {
+    public CustomerController(AccountService accountService,  UserDetailsServiceImpl userDetailsService) {
 
-        this.customerService = customerService;
+
         this.accountService = accountService;
-
         this.userDetailsService = userDetailsService;
     }
 
@@ -32,10 +34,15 @@ public class CustomerController {
         return accountService.getAccountInfo(accountService.getAccountByEmail(userDetailsService.userEmail).get().getId());
     }
 
+    @GetMapping(path = "/bestellingen")
+    public ArrayList<PlacedOrder> getOrders(){
+        return accountService.getOrders(accountService.getAccountByEmail(userDetailsService.userEmail).get().getId());
+    }
 
 
 
-    @PutMapping(path = "/change")
+
+    @PutMapping(path = "/aanpassen")
     public void updateAccount(
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String lastName,
