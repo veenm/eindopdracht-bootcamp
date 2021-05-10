@@ -3,6 +3,7 @@ package nl.veenm.novi.account;
 import nl.veenm.novi.placedOrder.PlacedOrder;
 import nl.veenm.novi.placedOrder.PlacedOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -16,6 +17,7 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final PlacedOrderRepository placedOrderRepository;
+    private PasswordEncoder passwordEncoder;
 
 
     @Autowired
@@ -24,6 +26,8 @@ public class AccountService {
         this.placedOrderRepository = placedOrderRepository;
 
     }
+
+
 
     public Optional<Account> getAccountByEmail(String email){
         return accountRepository.findAccountByEmail(email);
@@ -44,9 +48,11 @@ public class AccountService {
     }
 
     @Transactional
-    public void updateAccount(Long accountId, String firstName,String lastName, String email, String phone, String address, String postalCode, String city) {
+    public void updateAccount(Long accountId, String firstName,String lastName, String email, String phone, String address, String postalCode, String city, String password) {
         Account account = accountRepository.findById(accountId).orElseThrow(() -> new IllegalStateException(
                 "Account with id " + accountId + " does not exist."));
+
+        password = passwordEncoder.encode(password);
 
         if (firstName != null && firstName.length() > 0 && !Objects.equals(account.getFirstName(), firstName)) {
             account.setFirstName(firstName);
@@ -75,50 +81,18 @@ public class AccountService {
         if (city != null && city.length() > 0 && !Objects.equals(account.getCity(), city)) {
             account.setCity(city);
         }
+        if (password != null && password.length() > 0 && !Objects.equals(account.getPassword(), password)) {
+            account.setPassword(password);
+        }
 
         accountRepository.saveAll(List.of(account));
     }
 
-    
-
-
-    public List<Account> getAccounts(){
+    public List<Account> getAccounts() {
         return accountRepository.findAll();
     }
 
-    public Optional<Account> getAccount(Long accountId){
-        return accountRepository.findById(accountId);
-    }
-
-    public void addNewAccount(Account account) {
-        Optional<Account> accountOptional =
-                accountRepository.findAccountByEmail(account.getEmail());
-        if(accountOptional.isPresent()){
-            throw new IllegalStateException("Email already taken");
-        }
-
-        accountRepository.save(account);
-
-    }
-
-    public void deleteAccount(Long accountId) {
-        boolean exists = accountRepository.existsById(accountId);
-        if(!exists){
-            throw new IllegalStateException("Account with id " + accountId + " does not exist.");
-
-        }
-        else{
-            accountRepository.deleteById(accountId);
-        }
-
-    }
-
-
-    public List<Account> getCustomers() {
-        return accountRepository.findAll();
-    }
-
-    public Optional<Account> getCustomer(String email) {
+    public Optional<Account> getAccount(String email) {
         return accountRepository.findAccountByEmail(email);
     }
 

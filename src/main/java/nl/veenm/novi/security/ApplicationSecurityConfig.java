@@ -38,7 +38,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
-                .antMatchers("/customer/api/**").hasRole(CUSTOMER.name())
                 .antMatchers(HttpMethod.GET, "/restaurant/api/customers").hasAuthority(CUSTOMER_READ.getPermission())
                 .antMatchers("/restaurant/api/**").hasAnyRole(MANAGER.name(), COURIER.name(), CHEF.name())
                 .anyRequest()

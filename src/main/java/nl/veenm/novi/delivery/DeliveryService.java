@@ -1,5 +1,6 @@
 package nl.veenm.novi.delivery;
 
+import nl.veenm.novi.exceptions.DeliveryNotInTransit;
 import nl.veenm.novi.placedOrder.PlacedOrder;
 import nl.veenm.novi.placedOrder.PlacedOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,33 +18,35 @@ public class DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
     private final PlacedOrderRepository placedOrderRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
-    public DeliveryService(DeliveryRepository deliveryRepository, PlacedOrderRepository placedOrderRepository) {
+    public DeliveryService(DeliveryRepository deliveryRepository, PlacedOrderRepository placedOrderRepository, EntityManager entityManager) {
         this.deliveryRepository = deliveryRepository;
         this.placedOrderRepository = placedOrderRepository;
+        this.entityManager = entityManager;
     }
 
     public List<Delivery> getDeliveries(){
-        ArrayList<Delivery> deliverys = new ArrayList<Delivery>();
-        deliverys.addAll(deliveryRepository.findAll());
+        ArrayList<Delivery> deliveries = new ArrayList<Delivery>();
+        deliveries.addAll(deliveryRepository.findAll());
         int i = 0;
-        for (Delivery delivery: deliverys) {
+        for (Delivery delivery: deliveries) {
 
             if(delivery.getStatus().equalsIgnoreCase("order_delivered")){
-                deliverys.remove(i);
+                deliveries.remove(i);
             }
             i++;
 
         }
-        return deliverys;
+        return deliveries;
     }
 
     @Transactional
-    public String deliveryTransit(Long orderId){
-        Optional<PlacedOrder> orderDetails = placedOrderRepository.findById(orderId);
+    public String deliveryTransit(Optional<PlacedOrder> orderDetails){
+
 
 
         orderDetails.get().setStatus("order_in_transit");
@@ -63,24 +66,28 @@ public class DeliveryService {
     }
 
     @Transactional
-    public String deliveryDone(Long orderId){
-        Optional<PlacedOrder> orderDetails = placedOrderRepository.findById(orderId);
-
-
-        orderDetails.get().setStatus("order_delivered");
-        //update status
-        entityManager.createNativeQuery("UPDATE placed_order SET status = ? WHERE id = ?")
-                .setParameter(1, orderDetails.get().getStatus())
-                .setParameter(2,orderDetails.get().getId())
-                .executeUpdate();
-        entityManager.createNativeQuery("UPDATE delivery SET status = ? WHERE id = ?")
-                .setParameter(1, orderDetails.get().getStatus())
-                .setParameter(2,orderDetails.get().getId())
-                .executeUpdate();
+    public String deliveryDone(Optional<PlacedOrder> orderDetails){
 
 
 
-        return "Order status has been updated";
+        if(orderDetails.get().getStatus().equalsIgnoreCase("order_in_transit")) {
+            orderDetails.get().setStatus("order_delivered");
+            //update status
+            entityManager.createNativeQuery("UPDATE placed_order SET status = ? WHERE id = ?")
+                    .setParameter(1, orderDetails.get().getStatus())
+                    .setParameter(2, orderDetails.get().getId())
+                    .executeUpdate();
+            entityManager.createNativeQuery("UPDATE delivery SET status = ? WHERE id = ?")
+                    .setParameter(1, orderDetails.get().getStatus())
+                    .setParameter(2, orderDetails.get().getId())
+                    .executeUpdate();
+
+
+            return "Order status has been updated";
+        }
+        else {
+            throw new DeliveryNotInTransit("Delivery status is not in transit");
+        }
     }
 
 }

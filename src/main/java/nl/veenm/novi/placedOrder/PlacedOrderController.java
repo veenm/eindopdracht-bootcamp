@@ -24,6 +24,11 @@ public class PlacedOrderController {
         return placedOrderService.addNewItem(itemId);
     }
 
+    @DeleteMapping(path = "/bestellen/{itemId}")
+    public String removeOrder(@PathVariable("itemId") Long itemId){
+        return placedOrderService.removeItem(itemId);
+    }
+
     @GetMapping(path = "/bestellen/overzicht")
     public List<MenuItem> getItems(){
         return placedOrderService.getOrderedItems();

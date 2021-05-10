@@ -4,6 +4,7 @@ import nl.veenm.novi.account.Account;
 import nl.veenm.novi.account.AccountRepository;
 import nl.veenm.novi.delivery.Delivery;
 import nl.veenm.novi.delivery.DeliveryRepository;
+import nl.veenm.novi.exceptions.PaymentNotKnownException;
 import nl.veenm.novi.menuitems.MenuItem;
 import nl.veenm.novi.menuitems.MenuItemRepository;
 import nl.veenm.novi.pickup.Pickup;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -84,22 +86,12 @@ public class PlacedOrderService {
         System.out.println(itemId);
         Optional<MenuItem> itemFind = menuItemRepository.findById(itemId);
         MenuItem menuItem = itemFind.get();
-        System.out.println(menuItem.getName());
-
 
         orderedMenuItems.add(menuItem);
-        System.out.println(menuItem.getName() + " has been added.");
 
         Collections.sort(orderedMenuItems, new SortMenuItems());
         Collections.reverse(orderedMenuItems);
 
-
-        for (MenuItem menuitem:orderedMenuItems) {
-            System.out.println("Id:" + menuitem.getId());
-            System.out.println("Name:" + menuitem.getName());
-            System.out.println("Price:" + menuitem.getPrice());
-
-        }
         return menuItem.getName() + " has been added";
 
 
@@ -122,7 +114,16 @@ public class PlacedOrderService {
             throw new IllegalStateException("AccountId not found");
         }
 
-        LocalDate date = LocalDate.now();
+        if(payment.equalsIgnoreCase("online") || payment.equalsIgnoreCase("local")){
+            newOrder.setPayment(payment);
+        }
+        else {
+            throw new PaymentNotKnownException(payment + " is an unknown payment. Please try online or local instead");
+        }
+
+        String dateFormat = "dd.MM.yyyy";
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(dateFormat);
+        String date = dateTimeFormatter.format(LocalDate.now());
 
         for (MenuItem item : orderedMenuItems) {
             price = price + item.getPrice();
@@ -139,7 +140,6 @@ public class PlacedOrderService {
         newOrder.setOrderDate(date);
         newOrder.setCustomerId(customerId);
         newOrder.setDelivery(delivery);
-        newOrder.setPayment(payment);
         newOrder.setStatus("Order_Placed");
 
         System.out.println(newOrder.getPayment() + " " + newOrder.isDelivery());
@@ -154,31 +154,16 @@ public class PlacedOrderService {
             long lastId = 0L;
             int lastQuantity = 0;
             for (MenuItem item: orderedMenuItems) {
-
-                System.out.println("item.getId() = " + item.getId());
-                System.out.println("lastId = " + lastId);
                 if(item.getId() == lastId && newOrder.getId() != lastOrderId){
                     int quantity = lastQuantity + 1;
-                    System.out.println("lastQuantity + 1 = " + lastQuantity);
-                    entityManager.createNativeQuery("DELETE FROM placed_order_details WHERE item_id=?")
-                            .setParameter(1,item.getId())
+                    entityManager.createNativeQuery("UPDATE placed_order_details SET quantity = ? WHERE placed_order_id = ? AND item_id = ?")
+                            .setParameter(1, quantity)
+                            .setParameter(2,newOrder.getId())
+                            .setParameter(3,item.getId())
                             .executeUpdate();
-                    entityManager.createNativeQuery("INSERT INTO placed_order_details (id, item_id, placed_order_id, quantity) VALUES (?,?,?,?)")
-                            .setParameter(1,placedOrderDetailsIdCounter)
-                            .setParameter(2,newOrderDetails.getItemId())
-                            .setParameter(3,newOrderDetails.getPlacedOrderId())
-                            .setParameter(4,quantity)
-                            .executeUpdate();
-                    System.out.println("Quantity is aangepast met 1");
-                    System.out.println("Quantity is nu: " + quantity);
 
-                    System.out.println("newQuantity = " + newOrderDetails.getQuantity());
-
-                    lastId = Math.toIntExact(newOrderDetails.getItemId());
+                    lastId = newOrderDetails.getItemId();
                     lastQuantity = quantity;
-
-                    System.out.println("lastQuantity = " + lastQuantity);
-
                 }
                 else {
                     newOrderDetails.setItemId(item.getId());
@@ -268,9 +253,23 @@ public class PlacedOrderService {
                 .setParameter(1, orderDetails.get().getStatus())
                 .setParameter(2,orderDetails.get().getId())
                 .executeUpdate();
-        System.out.println("orderDetails Status: " + orderDetails.get().getStatus());
-        System.out.println("orderDetails Id: " + orderDetails.get().getId());
 
         return "Order status has been updated";
     }
+
+    public String removeItem(Long itemId) {
+        Optional<MenuItem> itemFind = menuItemRepository.findById(itemId);
+        MenuItem menuItem = itemFind.get();
+
+        orderedMenuItems.remove(menuItem);
+
+        Collections.sort(orderedMenuItems, new SortMenuItems());
+        Collections.reverse(orderedMenuItems);
+
+
+        return menuItem.getName() + " has been removed";
+
+
+    }
 }
+

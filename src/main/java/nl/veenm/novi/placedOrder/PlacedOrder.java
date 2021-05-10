@@ -2,7 +2,7 @@ package nl.veenm.novi.placedOrder;
 
 
 import javax.persistence.*;
-import java.time.LocalDate;
+
 
 
 @Entity
@@ -14,7 +14,7 @@ public class PlacedOrder{
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_sequence")
     private Long id;
     private Long customerId;
-    private LocalDate orderDate;
+    private String orderDate;
     private float amount;
     private String payment;
     private Integer amountOfServing;
@@ -24,7 +24,16 @@ public class PlacedOrder{
     public PlacedOrder() {
     }
 
-
+    public PlacedOrder(Long id, Long customerId, String orderDate, float amount, String payment, Integer amountOfServing, boolean delivery, String status) {
+        this.id = id;
+        this.customerId = customerId;
+        this.orderDate = orderDate;
+        this.amount = amount;
+        this.payment = payment;
+        this.amountOfServing = amountOfServing;
+        this.delivery = delivery;
+        this.status = status;
+    }
 
     public Long getId() {
         return id;
@@ -42,11 +51,11 @@ public class PlacedOrder{
         this.customerId = customerId;
     }
 
-    public LocalDate getOrderDate() {
+    public String getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(LocalDate orderDate) {
+    public void setOrderDate(String orderDate) {
         this.orderDate = orderDate;
     }
 

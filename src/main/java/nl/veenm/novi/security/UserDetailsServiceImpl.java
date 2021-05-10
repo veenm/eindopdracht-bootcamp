@@ -34,14 +34,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .roles(account.getRole())
                 .build();
 
-        System.out.println(account.getEmail());
-        System.out.println(account.getPassword());
-        System.out.println(account.getRole());
-        System.out.println(account.getId());
 
         userEmail = account.getEmail();
 
-        System.out.println(userEmail);
 
         return user;
     }

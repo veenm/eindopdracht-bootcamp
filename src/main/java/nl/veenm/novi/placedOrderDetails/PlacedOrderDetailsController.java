@@ -24,7 +24,7 @@ public class PlacedOrderDetailsController {
         return placedOrderDetailsService.getOrderDetails();
     }
 
-    @GetMapping(path = ("/{orderId}"))
+    @GetMapping(path = ("/view/{orderId}"))
     public List<PlacedOrderDetails> getOrderDetailsByOrderId(@PathVariable ("orderId") Long orderId){
         return placedOrderDetailsService.getOrderDetailsById(orderId);
     }

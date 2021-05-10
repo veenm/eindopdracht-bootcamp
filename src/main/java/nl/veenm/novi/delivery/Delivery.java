@@ -22,7 +22,17 @@ public class Delivery {
     public Delivery() {
     }
 
-
+    public Delivery(Long id, Long orderId, Long customerId, String customerAddress, String customerCity, String customerPhone, boolean paid, float amount, String status) {
+        this.id = id;
+        this.orderId = orderId;
+        this.customerId = customerId;
+        this.customerAddress = customerAddress;
+        this.customerCity = customerCity;
+        this.customerPhone = customerPhone;
+        this.paid = paid;
+        this.amount = amount;
+        this.status = status;
+    }
 
     public String getCustomerAddress() {
         return customerAddress;

@@ -50,10 +50,11 @@ public class CustomerController {
             @RequestParam(required = false) String phone,
             @RequestParam(required = false) String address,
             @RequestParam(required = false) String postalCode,
-            @RequestParam(required = false) String city){
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) String password){
 
             Long customerId = accountService.getAccountByEmail(userDetailsService.userEmail).get().getId();
-            accountService.updateAccount(customerId, firstName,lastName, email, phone,address, postalCode, city);
+            accountService.updateAccount(customerId, firstName,lastName, email, phone,address, postalCode, city, password);
 
 
     }

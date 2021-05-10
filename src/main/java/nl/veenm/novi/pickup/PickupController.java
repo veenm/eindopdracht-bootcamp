@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/restaurant/api/v1/pickup")
+@RequestMapping(path = "/restaurant/api/v1/pickups")
 public class PickupController {
 
     private final PickupService pickupService;
@@ -19,8 +19,13 @@ public class PickupController {
     }
 
     @GetMapping
-    public List<Pickup> getDeliveries() {
+    public List<Pickup> getPickups() {
         return pickupService.getPickups();
+    }
+
+    @PostMapping(path = "/done/{orderId}")
+    public String pickupDone(@PathVariable ("orderId") Long orderId){
+        return pickupService.pickupDone(orderId);
     }
 }
 

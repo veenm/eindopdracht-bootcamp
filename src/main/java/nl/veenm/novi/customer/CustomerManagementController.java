@@ -23,14 +23,14 @@ public class CustomerManagementController {
     @GetMapping
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     public List<Account> getAllCustomers(){
-        return accountService.getCustomers();
+        return accountService.getAccounts();
     }
 
 
     @GetMapping(path = "{email}")
     @PreAuthorize("hasRole('ROLE_MANAGER')")
     public Optional<Account> getSpecificCustomer(@PathVariable("email") String email){
-        return accountService.getCustomer(email);
+        return accountService.getAccount(email);
     }
 
 
